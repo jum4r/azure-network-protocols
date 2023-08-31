@@ -20,8 +20,8 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 
 <h2>Operating Systems Used </h2>
 
-- Windows 10 (21H2)
-- Ubuntu Server 20.04
+- Windows 10 (22H2)
+- Ubuntu Server 22.04
 
 <h2>High-Level Steps</h2>
 
@@ -32,26 +32,126 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 
 <h2>Actions and Observations</h2>
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+### Create a Free Azure Account
+<img width="786" alt="image" src="https://i.imgur.com/h1oEndK.png">
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+1. Sign up: [Azure Free Account](https://azure.microsoft.com/en-us/free/)
+2. Login: [Azure Portal](https://portal.azure.com)
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+### Create 2 Virtual Machines
+<img width="786" alt="image" src="https://i.imgur.com/bqa4s5q.png">
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Search for Virtual Machines and create a new Virtual Machine.
+3. Configure the 1st VM:
+   - Resource Group: RG-NSG
+   - VM Name: vm-windows
+   - Region: East US 2 (or a region closer to you)
+   - Image: Windows 10 Pro
+   - Size: 2 vCPUs
+   - Username: azureuser / Password123!
+   - Networking: Default settings
+   - Virtual Network: Default settings
+4. Create the VM.
+5. Once the VM is created, create another VM.
+6. Configure the 2nd VM:
+   - Resource Group: RG-NSG (same as vm-windows)
+   - VM Name: vm-linux
+   - Region: East US 2 (or a region closer to you)
+   - Image: Ubuntu Server 22.04
+   - Size: 2 vCPUs
+   - Authentication Type: Password
+   - Username: azureuser / Password123!
+   - Virtual Network: vm-windows-vnet (same as vm-windows)
+7. Create the 2nd VM.
+8. Once both VMs are created, ensure you can RDP into <b>vm-windows</b> with the provided credentials.
+9. After logging in, we'll install Wireshark:
+   - Open browser and go to [Wireshark](https://www.wireshark.org/download.html)
+   - Download and Install <b>Windows Installer (64-bit)</b>
+
+### Monitoring Internet Control Message Protocol (ICMP) Traffic with Wireshark
+<img width="786" alt="image" src="https://i.imgur.com/FDG7Mkk.png">
+
+1. Type <b>Wireshark</b> in Windows Search Bar and open
+2. Select <b>Ethernet</b> and <b>Start capturing packets</b> (blue icon on top)
+   - Observe the live traffic of vm-windows
+3. Type <b>icmp</b> in the filter above
+4. Back in [Azure Portal](https://portal.azure.com), go to Virtual Machines
+5. Select <b>vm-linux</b> and copy the Private IP address
+6. Go back to vm-windows
+7. Open Powershell and type <b>ping 10.0.0.5</b> (replace with your <b>vm-linux</b> Private IP address).
+   - Observe the traffic between VMs within WireShark
+8. Now type <b>ping www.google.com</b>
+   - Observe the traffic between a VM and a public website within Wireshark
+9. In Wireshark, click <b>Restart current capture</b> (green icon on top)
+10. Then <b>Continue without saving</b> to clear previous traffic
+11. In Powershell, type <b>ping 10.0.0.5 -t</b> in initiate continous ping
+12. Back to [Azure Portal](https://portal.azure.com), search <b>Network security group</b> or <b>nsg</b>
+13. Select <b>vm-linux-nsg</b> > <b>Inbound security rules</b> > <b>Add</b> and configure:
+    - Protocol: ICMP
+    - Action: Deny
+    - Name: Deny_ICMP
+14. Once it's done, return to <b>vm-windows</b>:
+    - Observe the activity within PowerShell and Wireshark. You should now see a stream of requests without any replies.
+15. Navigate back to <b>vm-linux-nsg</b> > <b>Inbound security rules</b> > <b>Deny_ICMP</b> configure:
+    - Action: Allow
+16. Return to <b>vm-windows</b>:
+    - Observe the activity within PowerShell and Wireshark. You should now see a stream of both requests and replies.
+17. In Powershell, press <b>ctrl</b> + <b>c</b> to stop the ping
+18. In Wireshark, click <b>Restart current capture</b> to clear previous traffic
+
+### Observing Secure Shell (SSH) Traffic
+<img width="786" alt="image" src="https://i.imgur.com/WgqRDpW.png">
+
+1. Still in <b>vm-windows</b>, go to Wireshark, type <b>ssh</b>
+2. In Powershell, type <b>ssh azureuser@10.0.0.5</b>
+   - Continue Connecting?: type <b>yes</b>
+   - Password: type <b>Password123!</b> (you won't see it as you type but it's there)
+   - Press Enter and it should log you in to <b>vm-linux</b> via SSH
+3. Once logged in, observe Wireshark as we type different Linux commands:
+   - <b>id</b> (Confirm identity of a specified Linux user)
+   - <b>uname -a</b> (Display system information)
+   - <b>pwd</b> (Print working directory)
+   - <b>ls -lasth</b> (List files/folders in current directory)
+   - <b>touch hi.txt</b> (Create blank/empty files)
+   - <b>ls -lasth</b> (Observe the new text file created)
+   - <b>rm hi.txt</b> (Delete files or directories)
+   - <b>ls -lasth</b> (Observe the lack of text file)
+   - <b>exit</b> (Close SSH connection)
+
+### Observing Dynamic Host Configuration Protocol (DHCP) Traffic
+<img width="786" alt="image" src="https://i.imgur.com/z25VWvg.png">
+
+1. In Wireshark, type <b>dhcp</b>
+2. In Powershell, type <b>ipconfig /renew</b> to reissue IP address 
+   - Observe live dhcp traffic within Wireshark
+
+### Observing Domain Name System (DNS) Traffic
+<img width="786" alt="image" src="https://i.imgur.com/x5GRwJq.png">
+
+1. In Wireshark, type <b>dns</b>
+2. In Powershell, type <b>nslookup www.google.com</b>
+   - Observe live dns traffic within Wireshark
+3. Now type <b>nslookup www.disney.com</b>
+   - Observe live dns traffic within Wireshark
+
+### Observing Remote Desktop Protocol (RDP) Traffic
+<img width="786" alt="image" src="https://i.imgur.com/VG06T2X.png">
+
+1. In Wireshark, type <b>tcp.port == 3389</b>
+   - Observe the continuous traffic within Wireshark. Since we're actively connected to <b>vm-windows</b> via RDP from our PC, traffic is consistently being transmitted.
+2. Close your remote desktop connection.
+
+### Deleting Resource Groups
+<img width="786" alt="image" src="https://i.imgur.com/W6MxJTI.png">
+
+1. Back in [Azure Portal](https://portal.azure.com) 
+
+
+
+
+
+
+
+
+
