@@ -25,10 +25,10 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 
 <h2>High-Level Steps</h2>
 
-- Step 1
-- Step 2
-- Step 3
-- Step 4
+- Create a Windows Virtual Machine and a Linux Virtual Machine 
+- Download and Install Wireshark
+- Observe ICMP, SSH, DHCP, DNS, and RDP Traffic
+- Cleaning Up Resource Groups
 
 <h2>Actions and Observations</h2>
 
@@ -145,8 +145,10 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 ### Deleting Resource Groups
 <img width="786" alt="image" src="https://i.imgur.com/W6MxJTI.png">
 
-1. Back in [Azure Portal](https://portal.azure.com) 
-
+1. Go back to [Azure Portal](https://portal.azure.com) and navigate to <b>Resource Groups</b>
+2. Select <b>RG-NSG</b> > <b>Delete resource group</b>
+3. Once finished, head back to <b>Resource Groups</b> > <b>NetworkWatcherRG</b> > <b>Delete resource group</b>.
+4. Refresh [Azure Portal](https://portal.azure.com) to ensure no resource groups are left. Congratulations, we've finished!
 
 
 
