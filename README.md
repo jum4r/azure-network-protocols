@@ -30,7 +30,7 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 - Observe ICMP, SSH, DHCP, DNS, and RDP Traffic
 - Cleaning Up Resource Groups
 
-<h2>Actions and Observations</h2>
+<h2>Setup</h2>
 
 ### Create a Free Azure Account
 <img width="786" alt="image" src="https://i.imgur.com/h1oEndK.png">
@@ -68,6 +68,8 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 9. After logging in, we'll install Wireshark:
    - Open browser and go to [Wireshark](https://www.wireshark.org/download.html)
    - Download and Install <b>Windows Installer (64-bit)</b>
+
+<h2>Actions & Observations</h2>
 
 ### Monitoring Internet Control Message Protocol (ICMP) Traffic with Wireshark
 <img width="786" alt="image" src="https://i.imgur.com/FDG7Mkk.png">
@@ -141,6 +143,8 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 1. In Wireshark, type <b>tcp.port == 3389</b>
    - Observe the continuous traffic within Wireshark. Since we're actively connected to <b>vm-windows</b> via RDP from our PC, traffic is consistently being transmitted.
 2. Close your remote desktop connection.
+
+<h2>Cleanup</h2>
 
 ### Deleting Resource Groups
 <img width="786" alt="image" src="https://i.imgur.com/W6MxJTI.png">
