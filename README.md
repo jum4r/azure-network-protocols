@@ -74,12 +74,12 @@ In this tutorial, we observe various network traffic to and from Azure Virtual M
 ### Monitoring Internet Control Message Protocol (ICMP) Traffic with Wireshark
 <img width="786" alt="image" src="https://i.imgur.com/FDG7Mkk.png">
 
-1. Type <b>Wireshark</b> in Windows Search Bar and open
+1. Type <b>Wireshark</b> in Windows Search Bar and open.
 2. Select <b>Ethernet</b> and <b>Start capturing packets</b> (blue icon on top)
    - Observe the live traffic of vm-windows
-3. Type <b>icmp</b> in the filter above
-4. Back in [Azure Portal](https://portal.azure.com), go to Virtual Machines
-5. Select <b>vm-linux</b> and copy the Private IP address
+3. Type <b>icmp</b> in the filter above.
+4. Back in [Azure Portal](https://portal.azure.com), go to Virtual Machines.
+5. Select <b>vm-linux</b> and copy the Private IP address.
 6. Go back to vm-windows
 7. Open Powershell and type <b>ping 10.0.0.5</b> (replace with your <b>vm-linux</b> Private IP address).
    - Observe the traffic between VMs within WireShark
